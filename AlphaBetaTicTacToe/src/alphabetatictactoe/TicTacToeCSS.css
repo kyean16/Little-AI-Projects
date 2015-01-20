@@ -7,8 +7,27 @@ and open the template in the editor.
     Created on : Jan 17, 2015, 2:15:43 PM
     Author     : Keyean
 */
+.button{
+    -fx-background-color: white;
+    -fx-border-color: black;
+}
+
+.button:hover{
+    -fx-border-color:blue;
+    -fx-border-width: 2px;
+}
 
 .boardPane{
-    -fx-border-radius: 2px;
+    -fx-border-radius: 10px;
     -fx-border-color: black;
+}
+
+.boardPane .button{
+    -fx-border-radius: 8px;
+}
+
+.boardPane .button:hover{
+    -fx-border-width: 4px;
+    -fx-border-color:blue;
+    
 }

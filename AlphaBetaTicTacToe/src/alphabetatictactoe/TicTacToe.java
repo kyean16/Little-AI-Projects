@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
 import javax.swing.JFrame;
@@ -25,6 +26,7 @@ public class TicTacToe implements Initializable {
     //Global Variables
     private int[][]tempState; //2D Array
     private boolean turn; //true: Player 1 ; false: Player 2
+    private boolean PlayerTurn; //true: Player Starts, false: Player finishes
     private TicTacToeState currentGame;
     private int win; //Keeps a tally of wins
     private int loss; //Keeps a tally of losses
@@ -34,11 +36,15 @@ public class TicTacToe implements Initializable {
     @FXML
     private GridPane boardPane;
     @FXML
+    private AnchorPane menu;
+    @FXML
     private Button loadStateButton; //handleLoadStateButtonAction()
     @FXML
     private Button newGame; //handleNewGame()
     @FXML
     private Label turnLabel;
+    @FXML
+    private Label helpLabel;
     @FXML
     private Label winLabel;
     @FXML
@@ -48,7 +54,7 @@ public class TicTacToe implements Initializable {
     @FXML
     private Button displayMinMax;
     @FXML
-    private Button buttonOne; //handleButtons
+    private Button buttonOne; //handleButtons //Mouse Hover
     @FXML
     private Button buttonTwo; //handleButtons
     @FXML
@@ -85,6 +91,7 @@ public class TicTacToe implements Initializable {
         tempState[2][2] = 1;
         currentGame = new TicTacToeState(tempState, turn); //Creates new TicTacToeState
         setGUI(currentGame); //Updates GUI
+        helpLabel.setText("Player: O , AI: X");
         if(!turn) //If False
             AI(); //Start AI Turn
     }
@@ -97,44 +104,59 @@ public class TicTacToe implements Initializable {
     {
         boardPane.setDisable(false);
         tempState = new int[3][3];
+        PlayerTurn = !PlayerTurn;
         currentGame = new TicTacToeState(tempState, turn);
+        if(!PlayerTurn)
+        {
+            AI();
+            helpLabel.setText("Player: O , AI: X");
+        }
+        else
+        {
+            helpLabel.setText("Player: X , AI: O");
+        }
         setGUI(currentGame);
     }
     
     @FXML
     private void handleButtons(ActionEvent event) throws InterruptedException
     {   
+        int value;
+        if(PlayerTurn)
+            value = 1;
+        else
+            value = -1;
         if(turn) //If True
         {
             String button = (event.getSource().toString()); //Gets the toString value of the button pressed
             switch(button)
             {
                     case "Button[id=buttonOne, styleClass=button]''":
-                                     update(buttonOne,0,0,1);
+                                     update(buttonOne,0,0,value);
                                      break;
                     case "Button[id=buttonTwo, styleClass=button]''":
-                                     update(buttonTwo,0,1,1);
+                                     update(buttonTwo,0,1,value);
                                      break;
                     case "Button[id=buttonThree, styleClass=button]''":
-                                     update(buttonThree,0,2,1);
+                                     update(buttonThree,0,2,value);
                                      break;
                     case "Button[id=buttonFour, styleClass=button]''":
-                                     update(buttonFour,1,0,1);
+                                     update(buttonFour,1,0,value);
                                      break;
                     case "Button[id=buttonFive, styleClass=button]''":
-                                     update(buttonFive,1,1,1);
+                                     update(buttonFive,1,1,value);
                                      break;
                     case "Button[id=buttonSix, styleClass=button]''":
-                                     update(buttonSix,1,2,1);
+                                     update(buttonSix,1,2,value);
                                      break;
                     case "Button[id=buttonSeven, styleClass=button]''":
-                                     update(buttonSeven,2,0,1);
+                                     update(buttonSeven,2,0,value);
                                      break;
                     case "Button[id=buttonEight, styleClass=button]''":
-                                     update(buttonEight,2,1,1);
+                                     update(buttonEight,2,1,value);
                                      break;
                     case "Button[id=buttonNine, styleClass=button]''":
-                                     update(buttonNine,2,2,1);
+                                     update(buttonNine,2,2,value);
                                      break;
                     default : System.out.println("Yo");
                             break;
@@ -156,6 +178,12 @@ public class TicTacToe implements Initializable {
             else
                 setWin(currentGame);
         }
+    }
+    
+    @FXML
+    public void onMouseButtonHover()
+    {
+        System.out.println("Here");
     }
     
     @FXML
@@ -228,22 +256,44 @@ public class TicTacToe implements Initializable {
      */
     public void setTurn()
     {
-        int x = 0;
-        int O = 0;
-        for(int i = 0 ; i < 3 ; i++)
+        if(PlayerTurn)
         {
-            for (int y = 0 ; y < 3 ; y++)
+            int x = 0;
+            int O = 0;
+            for(int i = 0 ; i < 3 ; i++)
             {
-                if(tempState[i][y] == 1)
-                    x++;
-                else if (tempState[i][y] == -1)
-                    O++;
+                for (int y = 0 ; y < 3 ; y++)
+                {
+                    if(tempState[i][y] == 1)
+                        x++;
+                    else if (tempState[i][y] == -1)
+                        O++;
+                }
             }
+            if (x > O)
+                turn = false;
+            else
+                turn = true;
         }
-        if (x > O)
-            turn = false;
-        else
-            turn = true;
+        else if(!PlayerTurn)
+        {
+            int x = 0;
+            int O = 0;
+            for(int i = 0 ; i < 3 ; i++)
+            {
+                for (int y = 0 ; y < 3 ; y++)
+                {
+                    if(tempState[i][y] == 1)
+                        x++;
+                    else if (tempState[i][y] == -1)
+                        O++;
+                }
+            }
+            if (x > O)
+                turn = true;
+            else
+                turn = false;
+        }
     }
     
     /**
@@ -251,15 +301,21 @@ public class TicTacToe implements Initializable {
      */
     public void AI()
     {
+        System.out.println(turn);
+        if(!PlayerTurn)
+        {
+            turn = true;
+        }
         TicTacToeState newGame = new TicTacToeState(tempState, turn);
         AI AITurn = new AI(newGame,turn);
         int[][]temp = AITurn.getBestChoice(turn);
         currentGame = new TicTacToeState(temp, turn);
-        System.out.println("___");
-        for(int i = 0; i < AITurn.allMoves.size(); i++)
-            System.out.println(AITurn.allMoves.get(i).getBranchWinCondition());
+        //System.out.println("___");
+        //for(int i = 0; i < AITurn.allMoves.size(); i++)
+          //  System.out.println(AITurn.allMoves.get(i).getBranchWinCondition());
         tempState = temp;
         setGUI(currentGame);
+        //System.out.println(turn);
     }
     
     /**
@@ -292,21 +348,43 @@ public class TicTacToe implements Initializable {
      */
     public void setWin(TicTacToeState temp)
     {
-        if(temp.getWinCondition() == 1)
+        if(PlayerTurn)
         {
-           turnLabel.setText("Player Won.");
-           win++;
+            if(temp.getWinCondition() == 1)
+            {
+               turnLabel.setText("Player Won.");
+               win++;
+            }
+            else if (temp.getWinCondition() == -1)
+            {
+               turnLabel.setText("AI Won.");
+               loss++;
+            }
+            else
+            {
+               turnLabel.setText("Draw.");
+               draw++;
+            }
         }
-        else if (temp.getWinCondition() == -1)
+        else if(!PlayerTurn)
         {
-           turnLabel.setText("AI Won.");
-           loss++;
+            if(temp.getWinCondition() == 1)
+            {
+               turnLabel.setText("AI Won.");
+               loss++;
+            }
+            else if (temp.getWinCondition() == -1)
+            {
+               turnLabel.setText("Player Won.");
+               win++;
+            }
+            else
+            {
+               turnLabel.setText("Draw.");
+               draw++;
+            }
         }
-        else
-        {
-           turnLabel.setText("Draw.");
-           draw++;
-        }
+        helpLabel.setText("Click Load State or New Game");
         boardPane.setDisable(true);
         upDateTracker();
     }

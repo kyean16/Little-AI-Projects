@@ -23,6 +23,7 @@ public class StartDriver extends Application {
         
         Scene scene = new Scene(root);
         
+        stage.setTitle("Tic Tac Toe");
         stage.setScene(scene);
         stage.show();
     }

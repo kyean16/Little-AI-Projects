@@ -49,7 +49,7 @@ public class AI
                allMoves.add(generateMove(newList.get(i),newList.get(i+1),turn));
             }
         }
-         Collections.sort(allMoves);
+        Collections.sort(allMoves);
     }
     
     public TicTacToeState generateMove(int row, int column,boolean turn)
@@ -128,7 +128,8 @@ public class AI
     
     public int[][] getBestChoice(boolean turn)
     {
-        if(!turn)
+        
+        if(!turn) //False
         {
         for(int i = 0 ; i < allMoves.size() ; i++)
         {
